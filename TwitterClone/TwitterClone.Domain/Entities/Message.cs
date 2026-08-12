@@ -7,6 +7,7 @@
         private Guid _receiverId;
         private string _content;
         private DateTime _sentAt;
+        private bool _isRead;
 
         public Message(Guid senderId, Guid receiverId, string content)
         {
@@ -15,6 +16,7 @@
             _receiverId = receiverId;
             _content = content;
             _sentAt = DateTime.UtcNow;
+            _isRead = false;
         }
 
         public Guid Id { get { return _id; } }
@@ -26,5 +28,10 @@
             set { _content = value; }
         }
         public DateTime SentAt { get { return _sentAt; } }
+        public bool IsRead
+        {
+            get { return _isRead; }
+            set { _isRead = value; }
+        }
     }
 }
