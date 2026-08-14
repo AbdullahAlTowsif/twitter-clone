@@ -1,23 +1,30 @@
 ﻿namespace TwitterClone.Domain.Entities
 {
-    public class Bookmark
+    public class Bookmark: BaseEntity
     {
-        private Guid _id;
         private Guid _userId;
         private Guid _tweetId;
-        private DateTime _bookmarkedAt;
 
-        public Bookmark(Guid userId, Guid tweetId)
+        public Bookmark(): base(Guid.NewGuid())
         {
-            _id = Guid.NewGuid();
-            _userId = userId;
-            _tweetId = tweetId;
-            _bookmarkedAt = DateTime.UtcNow;
+            
         }
 
-        public Guid Id { get { return _id; } }
-        public Guid UserId { get { return _userId; } }
-        public Guid TweetId { get { return _tweetId; } }
-        public DateTime BookmarkedAt { get { return _bookmarkedAt; } }
+        public Guid UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
+        }
+        public Guid TweetId
+        {
+            get { return _tweetId; }
+            set { _tweetId = value; }
+        }
+
+        public override string DescribeRecord()
+        {
+            var baseRecord = base.DescribeRecord();
+            return $"{baseRecord} - UserId: {UserId}, TweetId: {TweetId}";
+        }
     }
 }
