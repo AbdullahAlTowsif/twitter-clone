@@ -16,5 +16,10 @@
         {
             return base.DescribeRecord();
         }
+
+        public override string GetMessage()
+        {
+            return $"Unknow Error Occured!";
+        }
     }
 }

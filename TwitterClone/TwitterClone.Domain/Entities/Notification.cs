@@ -1,6 +1,6 @@
 ﻿namespace TwitterClone.Domain.Entities
 {
-    public class Notification: BaseEntity
+    public abstract class Notification: BaseEntity
     {
         private Guid _userId; // the user who gets the notification
         private string _type;
@@ -35,9 +35,16 @@
             set { _isRead = value; }
         }
 
+        public string GetNotificationInfo()
+        {
+            return $"UserId: {UserId}, Notification Type: {_type}";
+        }
+
         public override string DescribeRecord()
         {
             return $"Notification Class: Notification Type: {Type}, Message: {Message}, IsRead: {IsRead}";
         }
+
+        public abstract string GetMessage();
     }
 }
