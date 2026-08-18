@@ -1,16 +1,4 @@
-﻿using TwitterClone.Domain.Entities;
+﻿using TwitterClone.Test;
 
-// Upcasting
-var notifications = new List<Notification>()
-{
-    new LikeNotification(Guid.NewGuid()),
-    new CommentNotification(Guid.NewGuid()),
-    new FriendRequestNotification(Guid.NewGuid()),
-    new MentionNotification(Guid.NewGuid()),
-    new SystemNotification()
-};
-
-foreach (var notification in notifications)
-{
-    Console.WriteLine(notification.GetMessage());
-}
+var abstractionTest = new AbstractionTest();
+abstractionTest.Run();
