@@ -7,6 +7,7 @@ builder.Services.AddOpenApi();   // generates the spec
 
 // Repositories Registration
 builder.Services.AddSingleton<UserRepository>();
+builder.Services.AddSingleton<TweetRepository>();
 
 
 var app = builder.Build();
