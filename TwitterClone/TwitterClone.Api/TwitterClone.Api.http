@@ -1,6 +1,10 @@
-@TwitterClone.Api_HostAddress = http://localhost:5030
+@TwitterClone.Api_HostAddress = http://localhost:12092
 
-GET {{TwitterClone.Api_HostAddress}}/api/twitters,
+GET {{TwitterClone.Api_HostAddress}}/api/twitters
+Accept: application/json
+
+###
+
 GET {{TwitterClone.Api_HostAddress}}/api/users
 Accept: application/json
 
