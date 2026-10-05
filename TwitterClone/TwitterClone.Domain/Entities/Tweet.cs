@@ -54,6 +54,10 @@
 
         public bool CanBeLiked()
         {
+            if(string.IsNullOrWhiteSpace(Content))
+            {
+                return false;
+            }
             return true;
         }
     }
