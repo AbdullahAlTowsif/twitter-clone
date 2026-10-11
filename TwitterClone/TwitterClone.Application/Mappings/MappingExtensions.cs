@@ -53,16 +53,16 @@ namespace TwitterClone.Application.Mappings
         //    };
         //}
 
-        //public static FollowDto ToDto(this Follow follow)
-        //{
-        //    return new FollowDto
-        //    {
-        //        Id = follow.Id,
-        //        FollowerId = follow.FollowerId,
-        //        FollowingId = follow.FollowingId,
-        //        CreatedAt = follow.CreatedAt
-        //    };
-        //}
+        public static FollowDto ToDto(this Follow follow)
+        {
+            return new FollowDto
+            {
+                Id = follow.Id,
+                FollowerId = follow.FollowerId,
+                FollowingId = follow.FollowingId,
+                CreatedAt = follow.CreatedAt
+            };
+        }
 
         //public static RetweetDto ToDto(this Retweet retweet)
         //{

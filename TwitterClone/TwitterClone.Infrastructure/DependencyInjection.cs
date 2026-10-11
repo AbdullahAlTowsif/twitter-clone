@@ -13,6 +13,7 @@ namespace TwitterClone.Infrastructure
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<ITweetRepository, TweetRepository>();
             services.AddSingleton<IBookmarkRepository, BookmarkRepository>();
+            services.AddSingleton<IFollowRepository, FollowRepository>();
 
             return services;
         }
