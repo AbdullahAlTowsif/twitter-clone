@@ -1,10 +1,11 @@
-﻿using TwitterClone.Domain.Entities;
+﻿using TwitterClone.Application.Interfaces;
+using TwitterClone.Domain.Entities;
 
-namespace TwitterClone.Api.Data
+namespace TwitterClone.Infrastructure.Repositories
 {
-    public class UserRepository
+    public class UserRepository: IUserRepository
     {
-        private List<User> _users {  get; set; } = new List<User>();
+        private List<User> _users { get; set; } = new List<User>();
         public User AddUser(User user)
         {
             _users.Add(user);
@@ -13,7 +14,7 @@ namespace TwitterClone.Api.Data
 
         public User UpdateUser(User user)
         {
-            _users.RemoveAll(u =>  u.Id == user.Id);
+            _users.RemoveAll(u => u.Id == user.Id);
             _users.Add(user);
 
             return user;

@@ -1,4 +1,4 @@
-﻿namespace TwitterClone.Api.Dtos
+﻿namespace TwitterClone.Application.Dtos
 {
     public class TweetDto
     {
@@ -6,5 +6,6 @@
         public Guid UserId { get; set; }
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
     }
 }

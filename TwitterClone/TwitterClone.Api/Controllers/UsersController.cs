@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TwitterClone.Api.Data;
-using TwitterClone.Api.Dtos;
-using TwitterClone.Domain.Entities;
+using TwitterClone.Application.Dtos;
+using TwitterClone.Application.Interfaces;
 
 namespace TwitterClone.Api.Controllers
 {
@@ -11,49 +10,28 @@ namespace TwitterClone.Api.Controllers
     //[Authorize]
     public class UsersController : ControllerBase
     {
-        private readonly UserRepository _userRepository;
-        public UsersController(UserRepository userRepository) // Dependency Injection
+        private readonly IUserService _userService;
+        public UsersController(IUserService userService) // Dependency Injection
         {
-            _userRepository = userRepository;
+            _userService = userService;
         }
 
         [HttpGet]
         public IActionResult GetUsers()
         {
-            var users = _userRepository.GetUsers();
-
-            return Ok(users.Select(user => new UserDto
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-            }));
+            return Ok(_userService.GetUsers());
         }
 
         [HttpPost]
         [AllowAnonymous]
         public IActionResult CreateUser([FromBody] CreateUserDto createUserDto)
         {
-            if (string.IsNullOrWhiteSpace(createUserDto.FirstName) ||
-                string.IsNullOrWhiteSpace(createUserDto.LastName) ||
-                string.IsNullOrWhiteSpace(createUserDto.Email))
-            {
-                return BadRequest("All fields are required!");
-            }
+            var createdUser = _userService.CreateUser(createUserDto);
 
-            var existingUser = _userRepository.GetUserByEmail(createUserDto.Email);
-            if (existingUser != null)
+            if(createdUser == null)
             {
-                return BadRequest("A user with this email already exists!");
+                return BadRequest("An Error happened during create user.");
             }
-
-            var createdUser = _userRepository.AddUser(new User()
-            {
-                FirstName = createUserDto.FirstName,
-                LastName = createUserDto.LastName,
-                Email = createUserDto.Email
-            });
 
             return Ok(new UserDto
             {
@@ -68,70 +46,40 @@ namespace TwitterClone.Api.Controllers
         [HttpGet("{id}")]
         public IActionResult GetUserById([FromRoute] Guid id)
         {
-            var user = _userRepository.GetUserById(id);
+            var user = _userService.GetUserById(id);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            return Ok(new UserDto
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email
-            });
+            return Ok(user);
         }
 
 
         [HttpPut("{id}")]
         public IActionResult UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserDto updateUserDto)
         {
-            var user = _userRepository.GetUserById(id);
+            var user = _userService.UpdateUser(id, updateUserDto);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            user.FirstName = updateUserDto.FirstName;
-            user.LastName = updateUserDto.LastName;
-
-            _userRepository.UpdateUser(user);
-
-            return Ok(new UserDto
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email
-            });
-        }
-
-
-        [HttpPatch("{id}/phoneNumber")]
-        public IActionResult UpdateUserPhoneNumber([FromRoute] Guid id, [FromBody] string phoneNumber)
-        {
-            return Ok(new
-            {
-                UserId = id,
-                PhoneNumber = phoneNumber,
-            });
+            return Ok(user);
         }
 
 
         [HttpDelete("{id}")]
         public IActionResult DeleteUser([FromRoute] Guid id)
         {
-            var user = _userRepository.GetUserById(id);
+            var isDeleted = _userService.DeleteUser(id);
 
-            if (user == null)
+            if (isDeleted == false)
             {
                 return NotFound();
             }
-
-            var isDeleted = _userRepository.DeleteUser(user);
 
             return Ok(isDeleted);
         }

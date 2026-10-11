@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TwitterClone.Api.Data;
-using TwitterClone.Api.Dtos;
-using TwitterClone.Domain.Entities;
+using TwitterClone.Application.Dtos;
+using TwitterClone.Application.Interfaces;
 
 namespace TwitterClone.Api.Controllers
 {
@@ -9,137 +8,76 @@ namespace TwitterClone.Api.Controllers
     [ApiController]
     public class TwittersController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly TweetRepository _tweetRepository;
-        private readonly UserRepository _userRepository;
+        private readonly ITweetService _tweetService;
 
-        public TwittersController(
-            IConfiguration configuration,
-            TweetRepository tweetRepository,
-            UserRepository userRepository)
+        public TwittersController(IConfiguration configuration, ITweetService tweetService)
         {
-            _configuration = configuration;
-            _tweetRepository = tweetRepository;
-            _userRepository = userRepository;
+            _tweetService = tweetService;
         }
 
         [HttpGet]
-        public IActionResult GetTweets()
+        public IActionResult GetTweets([FromQuery] Guid? userId)
         {
-            var tweets = _tweetRepository.GetTweets();
-
-            return Ok(tweets.Select(ToDto));
+            return Ok(_tweetService.GetTweets(userId));
         }
 
         [HttpGet("{id}")]
         public IActionResult GetTweetById([FromRoute] Guid id)
         {
-            var tweet = _tweetRepository.GetTweetById(id);
+            var tweet = _tweetService.GetTweetById(id);
 
             if (tweet == null)
             {
                 return NotFound();
             }
 
-            return Ok(ToDto(tweet));
+            return Ok(tweet);
         }
 
-        [HttpGet("user/{userId}")]
-        public IActionResult GetTweetsByUser([FromRoute] Guid userId)
-        {
-            var user = _userRepository.GetUserById(userId);
-
-            if (user == null)
-            {
-                return NotFound("User not found!");
-            }
-
-            var tweets = _tweetRepository.GetTweetsByUserId(userId);
-
-            return Ok(tweets.Select(ToDto));
-        }
 
         [HttpPost]
         public IActionResult CreateTweet([FromBody] CreateTweetDto createTweetDto)
         {
-            if (string.IsNullOrWhiteSpace(createTweetDto.Content))
+            var createdTweet = _tweetService.CreateTweet(createTweetDto);
+
+            if (createdTweet is null)
             {
-                return BadRequest("Content is required!");
+                return BadRequest("Invalid content or user not found.");
             }
 
-            var maxLength = _configuration.GetValue<int>("TwitterSettings:MaxTweetLength", Tweet.MaxContentLength);
-            if (createTweetDto.Content.Length > maxLength)
+            return Ok(new TweetDto
             {
-                return BadRequest($"Tweet cannot be longer than {maxLength} characters!");
-            }
-
-            var user = _userRepository.GetUserById(createTweetDto.UserId);
-            if (user == null)
-            {
-                return NotFound("User not found!");
-            }
-
-            var createdTweet = _tweetRepository.AddTweet(
-                new Tweet(createTweetDto.UserId, createTweetDto.Content));
-
-            return CreatedAtAction(
-                nameof(GetTweetById),
-                new { id = createdTweet.Id },
-                ToDto(createdTweet));
+                Id = createdTweet.Id,
+                UserId = createdTweet.UserId,
+                Content = createdTweet.Content,
+                CreatedAt = createdTweet.CreatedAt,
+            });
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateTweet([FromRoute] Guid id, [FromBody] UpdateTweetDto updateTweetDto)
         {
-            var tweet = _tweetRepository.GetTweetById(id);
+            var updatedTweet = _tweetService.UpdateTweet(id, updateTweetDto);
 
-            if (tweet == null)
+            if (updatedTweet is null)
             {
-                return NotFound();
+                return NotFound("Tweet Not found or Content is invalid");
             }
 
-            if (string.IsNullOrWhiteSpace(updateTweetDto.Content))
-            {
-                return BadRequest("Content is required!");
-            }
-
-            var maxLength = _configuration.GetValue<int>("TwitterSettings:MaxTweetLength", Tweet.MaxContentLength);
-            if (updateTweetDto.Content.Length > maxLength)
-            {
-                return BadRequest($"Tweet cannot be longer than {maxLength} characters!");
-            }
-
-            tweet.Content = updateTweetDto.Content;
-            _tweetRepository.UpdateTweet(tweet);
-
-            return Ok(ToDto(tweet));
+            return Ok(updatedTweet);
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteTweet([FromRoute] Guid id)
         {
-            var tweet = _tweetRepository.GetTweetById(id);
+            var isDeleted = _tweetService.DeleteTweet(id);
 
-            if (tweet == null)
+            if (isDeleted == false)
             {
                 return NotFound();
             }
 
-            var isDeleted = _tweetRepository.DeleteTweet(tweet);
-
             return Ok(isDeleted);
-        }
-
-        // Maps the entity to a DTO so the API never exposes the entity directly
-        private static TweetDto ToDto(Tweet tweet)
-        {
-            return new TweetDto
-            {
-                Id = tweet.Id,
-                UserId = tweet.UserId,
-                Content = tweet.Content,
-                CreatedAt = tweet.CreatedAt
-            };
         }
     }
 }
