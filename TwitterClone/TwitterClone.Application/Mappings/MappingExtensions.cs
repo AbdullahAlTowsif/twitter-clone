@@ -42,16 +42,16 @@ namespace TwitterClone.Application.Mappings
             };
         }
 
-        //public static LikeDto ToDto(this Like like)
-        //{
-        //    return new LikeDto
-        //    {
-        //        Id = like.Id,
-        //        UserId = like.UserId,
-        //        TweetId = like.TweetId,
-        //        CreatedAt = like.CreatedAt
-        //    };
-        //}
+        public static LikeDto ToDto(this Like like)
+        {
+            return new LikeDto
+            {
+                Id = like.Id,
+                UserId = like.UserId,
+                TweetId = like.TweetId,
+                CreatedAt = like.CreatedAt
+            };
+        }
 
         public static FollowDto ToDto(this Follow follow)
         {

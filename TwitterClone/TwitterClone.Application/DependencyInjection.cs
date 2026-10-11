@@ -12,6 +12,7 @@ namespace TwitterClone.Application
             services.AddScoped<ITweetService, TweetService>();
             services.AddScoped<IBookmarkService, BookmarkService>();
             services.AddScoped<IFollowService, FollowService>();
+            services.AddScoped<ILikeService, LikeService>();
 
             return services;
         }
