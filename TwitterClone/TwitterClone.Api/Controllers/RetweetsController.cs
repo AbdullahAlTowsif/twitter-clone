@@ -1,27 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TwitterClone.Domain.Entities;
+using TwitterClone.Application.Dtos;
+using TwitterClone.Application.Interfaces;
 
 namespace TwitterClone.Api.Controllers
 {
-    [ApiController]
+
+    // api/retweets
     [Route("api/[controller]")]
+    [ApiController]
     public class RetweetsController : ControllerBase
     {
-        // temporary in-memory storage
-        private static readonly List<Retweet> _retweets = new();
 
-        // GET api/retweets
+        private readonly IRetweetService _retweetService;
+
+        public RetweetsController(
+            IRetweetService retweetService)
+        {
+            _retweetService = retweetService;
+        }
+
+
+        // GET /api/retweets?userId={userId}&tweetId={tweetId}
         [HttpGet]
-        public IActionResult GetAll()
+        [ProducesResponseType(typeof(List<RetweetDto>), StatusCodes.Status200OK)]
+        public IActionResult GetRetweets([FromQuery] Guid? userId, [FromQuery] Guid? tweetId)
         {
-            return Ok(_retweets);
+            return Ok(_retweetService.GetRetweets(userId, tweetId));
         }
 
-        // GET api/retweets/{id}
+        // GET /api/retweets/{id}
         [HttpGet("{id}")]
-        public IActionResult GetById(Guid id)
+        [ProducesResponseType(typeof(RetweetDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetRetweetById([FromRoute] Guid id)
         {
-            var retweet = _retweets.FirstOrDefault(x => x.Id == id);
+            var retweet = _retweetService.GetRetweetById(id);
+
             if (retweet == null)
             {
                 return NotFound();
@@ -30,41 +44,53 @@ namespace TwitterClone.Api.Controllers
             return Ok(retweet);
         }
 
-        // POST api/retweets
+        // POST /api/retweets
         [HttpPost]
-        public IActionResult Create(Retweet retweet)
+        [ProducesResponseType(typeof(RetweetDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult CreateRetweet([FromBody] CreateRetweetDto createRetweetDto)
         {
-            _retweets.Add(retweet);
-            return CreatedAtAction(nameof(GetById), new { id = retweet.Id }, retweet);
+            var createdRetweet = _retweetService.CreateRetweet(createRetweetDto);
+
+            if (createdRetweet == null)
+            {
+                // The comment is already validated by [ApiController], so the only failure left is an unknown user or tweet.
+                return BadRequest("The user or the tweet does not exist.");
+            }
+
+            return CreatedAtAction(nameof(GetRetweetById), new { id = createdRetweet.Id }, createdRetweet);
         }
 
-        // PUT api/retweets/{id}
+        // PUT /api/retweets/{id}
         [HttpPut("{id}")]
-        public IActionResult Update(Guid id, Retweet updated)
+        [ProducesResponseType(typeof(RetweetDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult UpdateRetweet([FromRoute] Guid id, [FromBody] UpdateRetweetDto updateRetweetDto)
         {
-            var retweet = _retweets.FirstOrDefault(x => x.Id == id);
+            var retweet = _retweetService.UpdateRetweet(id, updateRetweetDto);
+
             if (retweet == null)
             {
                 return NotFound();
             }
 
-            retweet.UserId = updated.UserId;
-            retweet.TweetId = updated.TweetId;
-            retweet.Comment = updated.Comment;
             return Ok(retweet);
         }
 
-        // DELETE api/retweets/{id}
+        // DELETE /api/retweets/{id}
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult DeleteRetweet([FromRoute] Guid id)
         {
-            var retweet = _retweets.FirstOrDefault(x => x.Id == id);
-            if (retweet == null)
+            var isDeleted = _retweetService.DeleteRetweet(id);
+
+            if (isDeleted == false)
             {
                 return NotFound();
             }
 
-            _retweets.Remove(retweet);
             return NoContent();
         }
     }

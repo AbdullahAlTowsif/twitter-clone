@@ -1,6 +1,5 @@
-using TwitterClone.Application.Interfaces;
-using TwitterClone.Application.Services;
-using TwitterClone.Infrastructure.Repositories;
+using TwitterClone.Application;
+using TwitterClone.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,11 +7,13 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();   // generates the spec
 
 // Repositories & Service Registration
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
+//builder.Services.AddSingleton<IUserRepository, UserRepository>();
+//builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddSingleton<ITweetRepository, TweetRepository>();
-builder.Services.AddScoped<ITweetService, TweetService>();
+
+// Clean Architecture: Repositories & Service Registration
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
 
 
 var app = builder.Build();
