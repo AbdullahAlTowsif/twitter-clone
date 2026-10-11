@@ -91,18 +91,18 @@ namespace TwitterClone.Application.Mappings
             };
         }
 
-        //public static NotificationDto ToDto(this Notification notification)
-        //{
-        //    return new NotificationDto
-        //    {
-        //        Id = notification.Id,
-        //        UserId = notification.UserId,
-        //        Type = notification.Type,
-        //        Message = notification.GetMessage(),
-        //        IsRead = notification.IsRead,
-        //        CreatedAt = notification.CreatedAt,
-        //        ModifiedAt = notification.ModifiedAt
-        //    };
-        //}
+        public static NotificationDto ToDto(this Notification notification)
+        {
+            return new NotificationDto
+            {
+                Id = notification.Id,
+                UserId = notification.UserId,
+                Type = notification.Type,
+                Message = notification.GetMessage(),
+                IsRead = notification.IsRead,
+                CreatedAt = notification.CreatedAt,
+                ModifiedAt = notification.ModifiedAt
+            };
+        }
     }
 }
