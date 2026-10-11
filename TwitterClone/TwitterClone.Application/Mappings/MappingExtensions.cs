@@ -77,19 +77,19 @@ namespace TwitterClone.Application.Mappings
         //    };
         //}
 
-        //public static MessageDto ToDto(this Message message)
-        //{
-        //    return new MessageDto
-        //    {
-        //        Id = message.Id,
-        //        SenderId = message.SenderId,
-        //        ReceiverId = message.ReceiverId,
-        //        Content = message.Content,
-        //        SentAt = message.SentAt,
-        //        IsRead = message.IsRead,
-        //        ModifiedAt = message.ModifiedAt
-        //    };
-        //}
+        public static MessageDto ToDto(this Message message)
+        {
+            return new MessageDto
+            {
+                Id = message.Id,
+                SenderId = message.SenderId,
+                ReceiverId = message.ReceiverId,
+                Content = message.Content,
+                SentAt = message.SentAt,
+                IsRead = message.IsRead,
+                ModifiedAt = message.ModifiedAt
+            };
+        }
 
         //public static NotificationDto ToDto(this Notification notification)
         //{
