@@ -13,6 +13,7 @@
         private string _lastName;
         private string _email;
         private string? _phoneNumber;
+        private string _passwordHash;
 
         public string FirstName
         {
@@ -33,6 +34,12 @@
         {
             get { return _phoneNumber; }
             set { _phoneNumber = value; }
+        }
+
+        public string PasswordHash
+        {
+            get { return _passwordHash; }
+            set { _passwordHash = value; }
         }
 
         private List<Guid> _followers = new List<Guid>();
