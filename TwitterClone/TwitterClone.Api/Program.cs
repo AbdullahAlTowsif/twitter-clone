@@ -1,6 +1,7 @@
 using TwitterClone.Application;
 using TwitterClone.Infrastructure;
 
+// fix: faced error while running
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
