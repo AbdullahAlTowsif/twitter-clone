@@ -1,8 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using TwitterClone.Application.Interfaces;
+using TwitterClone.Infrastructure.Auth;
 using TwitterClone.Infrastructure.Persistence;
 using TwitterClone.Infrastructure.Repositories;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 /*
  DotNet Object Lifetime (3 types):
@@ -11,6 +14,14 @@ using TwitterClone.Infrastructure.Repositories;
 2. AddSingleton: Kono application lifetime e ekta object ei thakbe.
 - A single instance is created the first time it is requested (or when provided directly) and shared everywhere.
 3. AddTransient: A new instance is created every time the service is requested.
+
+
+----- Where to register -----
+Amra application layer e auth service k register korsi. Karon interface ta o application layer e ache. AuthService o ache application layer e.
+Kintu ITokenService application layer e ache it's fine but etar implementation ache infrastructure layer e.
+implementation jehetun infrastructure layer e achi amake eita register korte hbe Infrastrucre layer e.
+
+--> Jehetu register kora hoise eder instance ami jkhono controller e inject korle pabo.
  */
 
 namespace TwitterClone.Infrastructure
@@ -38,6 +49,10 @@ namespace TwitterClone.Infrastructure
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IRetweetRepository, RetweetRepository>();
+
+            // ITokenService application layer e ache it's fine but etar implementation ache infrastructure layer e. Implementation jehetun infrastructure layer e achi amake eita register korte hbe Infrastrucre layer e.
+            services.AddScoped<ITokenService, JwtTokenService>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
 
             return services;
         }

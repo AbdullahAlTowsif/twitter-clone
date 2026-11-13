@@ -9,11 +9,17 @@ namespace TwitterClone.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ITweetRepository _tweetRepository;
+        private readonly IPasswordHasher _passwordHasher;
 
-        public UserService(IUserRepository userRepository, ITweetRepository tweetRepository)
+        public UserService(
+            IUserRepository userRepository,
+            ITweetRepository tweetRepository,
+            IPasswordHasher passwordHasher
+        )
         {
             _userRepository = userRepository;
             _tweetRepository = tweetRepository;
+            _passwordHasher = passwordHasher;
         }
 
         public UserDto? CreateUser(CreateUserDto createUserDto)
@@ -35,7 +41,8 @@ namespace TwitterClone.Application.Services
             {
                 FirstName = createUserDto.FirstName,
                 LastName = createUserDto.LastName,
-                Email = createUserDto.Email
+                Email = createUserDto.Email,
+                PasswordHash = _passwordHasher.Hash(createUserDto.ToDto(), createUserDto.Password)
             });
 
             return createdUser.ToDto();
