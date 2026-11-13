@@ -6,6 +6,7 @@ namespace TwitterClone.Api.Controllers
 {
     public class AuthController : ControllerBase // Inherit from ControllerBase
     {
+        // AuthService k ami AuthController e inject korsi. So eigula DI Container e register kora lagbe.
         private readonly IAuthService _authService;
         public AuthController(IAuthService authService) // Dependency Injection
         {
