@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using TwitterClone.Application;
 using TwitterClone.Infrastructure;
 using TwitterClone.Infrastructure.Auth;
+using TwitterClone.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,7 @@ builder.Services.AddOpenApi();   // generates the spec
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
-builder.Services.AddSingleton<JwtSettings>();
+builder.Services.AddSingleton<JwtSettings>(jwtSettings);
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -42,6 +44,7 @@ builder.Services
 
 // Clean Architecture: Repositories & Service Registration
 builder.Services.AddApplication();
+// Extension Method
 builder.Services.AddInfrastructure(builder.Configuration);
 
 
@@ -55,6 +58,12 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/openapi/v1.json", "TwitterClone API v1");
         options.RoutePrefix = "swagger";   // UI at /swagger
     });
+}
+
+if (app.Configuration.GetValue<bool>("Database:ApplyMigrationsOnStartup"))
+{
+    using var scope = app.Services.CreateScope();
+    await scope.ServiceProvider.GetRequiredService<TwitterCloneDbContext>().Database.MigrateAsync();
 }
 
 app.UseHttpsRedirection();

@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Win32;
 using TwitterClone.Application.Interfaces;
 using TwitterClone.Infrastructure.Auth;
 using TwitterClone.Infrastructure.Persistence;
 using TwitterClone.Infrastructure.Repositories;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 /*
  DotNet Object Lifetime (3 types):
@@ -38,8 +37,7 @@ namespace TwitterClone.Infrastructure
                 throw new Exception("Database connection string is not found!");
             }
 
-            // fix: change this in ef core part 2 class.
-            services.AddDbContext<TwitterCloneDbContext>();
+            services.AddDbContext<TwitterCloneDbContext>(options => options.UseNpgsql(connectionString));
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITweetRepository, TweetRepository>();

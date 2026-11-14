@@ -20,3 +20,11 @@ namespace TwitterClone.Infrastructure.Persistence
         }
     }
 }
+
+/*
+1. First add the entity in the TwitterCloneDbContext such as Tweet
+2. Next model binding in Configurations folder such as TweetConfiguration
+3. Now generate migrations
+- dotnet ef migrations add <migration_name> --project TwitterClone.Infrastructure --startup-project TwitterClone.Api --output-dir Persistence/Migrations
+ 
+*/

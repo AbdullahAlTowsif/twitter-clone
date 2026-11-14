@@ -26,6 +26,8 @@
             get { return _userId; }
             set { _userId = value; }
         }
+
+        //public User User { get; set; }
         public string Content
         {
             get { return _content; }
