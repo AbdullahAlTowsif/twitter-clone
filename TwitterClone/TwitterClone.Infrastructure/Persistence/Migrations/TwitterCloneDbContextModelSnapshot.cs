@@ -22,6 +22,241 @@ namespace TwitterClone.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Bookmark", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TweetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TweetId");
+
+                    b.HasIndex("UserId", "TweetId")
+                        .IsUnique();
+
+                    b.ToTable("Bookmarks");
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Follow", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("FollowerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FollowingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FollowingId");
+
+                    b.HasIndex("FollowerId", "FollowingId")
+                        .IsUnique();
+
+                    b.ToTable("Follows", t =>
+                        {
+                            t.HasCheckConstraint("CK_Follow_NoSelfFollow", "\"FollowerId\" <> \"FollowingId\"");
+                        });
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Like", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TweetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TweetId");
+
+                    b.HasIndex("UserId", "TweetId")
+                        .IsUnique();
+
+                    b.ToTable("Likes");
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NotificationKind")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("_message")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Message");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+
+                    b.HasDiscriminator<string>("NotificationKind").HasValue("Notification");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Retweet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(280)
+                        .HasColumnType("character varying(280)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedBy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TweetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TweetId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Retweets");
+                });
+
             modelBuilder.Entity("TwitterClone.Domain.Entities.Tweet", b =>
                 {
                     b.Property<Guid>("Id")
@@ -98,6 +333,137 @@ namespace TwitterClone.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.CommentNotification", b =>
+                {
+                    b.HasBaseType("TwitterClone.Domain.Entities.Notification");
+
+                    b.Property<Guid>("CommentByUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasDiscriminator().HasValue("Comment");
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.FriendRequestNotification", b =>
+                {
+                    b.HasBaseType("TwitterClone.Domain.Entities.Notification");
+
+                    b.Property<Guid>("RequestedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasDiscriminator().HasValue("FriendRequest");
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.LikeNotification", b =>
+                {
+                    b.HasBaseType("TwitterClone.Domain.Entities.Notification");
+
+                    b.Property<Guid>("LikeByUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasDiscriminator().HasValue("Like");
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.MentionNotification", b =>
+                {
+                    b.HasBaseType("TwitterClone.Domain.Entities.Notification");
+
+                    b.Property<Guid>("MentionedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasDiscriminator().HasValue("Mention");
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.SystemNotification", b =>
+                {
+                    b.HasBaseType("TwitterClone.Domain.Entities.Notification");
+
+                    b.HasDiscriminator().HasValue("System");
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Bookmark", b =>
+                {
+                    b.HasOne("TwitterClone.Domain.Entities.Tweet", null)
+                        .WithMany()
+                        .HasForeignKey("TweetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TwitterClone.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Follow", b =>
+                {
+                    b.HasOne("TwitterClone.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TwitterClone.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Like", b =>
+                {
+                    b.HasOne("TwitterClone.Domain.Entities.Tweet", null)
+                        .WithMany()
+                        .HasForeignKey("TweetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TwitterClone.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Message", b =>
+                {
+                    b.HasOne("TwitterClone.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TwitterClone.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("TwitterClone.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Retweet", b =>
+                {
+                    b.HasOne("TwitterClone.Domain.Entities.Tweet", null)
+                        .WithMany()
+                        .HasForeignKey("TweetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TwitterClone.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TwitterClone.Domain.Entities.Tweet", b =>

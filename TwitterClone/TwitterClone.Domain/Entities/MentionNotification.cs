@@ -2,6 +2,7 @@
 {
     public class MentionNotification : Notification
     {
+        private MentionNotification() : base() { }
         public MentionNotification(Guid mentionedByUserId) : base("Mention")
         {
             MentionedByUserId = mentionedByUserId;

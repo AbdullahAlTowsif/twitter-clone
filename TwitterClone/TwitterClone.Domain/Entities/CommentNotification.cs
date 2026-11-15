@@ -2,6 +2,7 @@
 {
     public sealed class CommentNotification : Notification
     {
+        private CommentNotification() : base() { }
         public CommentNotification(Guid commentByUserId) : base("Comment")
         {
             CommentByUserId = commentByUserId;

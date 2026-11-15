@@ -3,6 +3,7 @@
     // sealed: no one can inherit LikeNotification Class
     public sealed class LikeNotification: Notification
     {
+        private LikeNotification() : base() { }
         public LikeNotification(Guid likeByUserId): base("Like")
         {
             LikeByUserId = likeByUserId;

@@ -1,13 +1,20 @@
 ﻿namespace TwitterClone.Domain.Entities
 {
-    public abstract class Notification: BaseEntity
+    public abstract class Notification : BaseEntity
     {
         private Guid _userId; // the user who gets the notification
         private string _type;
         private string _message;
         private bool _isRead;
 
-        public Notification(string nofificationType): base(Guid.NewGuid())
+        // Used by EF Core
+        protected Notification() : base(Guid.NewGuid())
+        {
+            _type = string.Empty;
+            _message = string.Empty;
+        }
+
+        public Notification(string nofificationType) : base(Guid.NewGuid())
         {
             _type = nofificationType;
         }
