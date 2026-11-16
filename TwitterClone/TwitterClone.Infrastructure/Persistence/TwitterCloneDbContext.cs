@@ -18,6 +18,10 @@ namespace TwitterClone.Infrastructure.Persistence
         public DbSet<Follow> Follows { get; set; }
         public DbSet<Bookmark> Bookmarks { get; set; }
         public DbSet<Like> Likes { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
 
 
         // Runtime Polymorphism happening here
