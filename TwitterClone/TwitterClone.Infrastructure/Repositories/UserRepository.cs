@@ -1,43 +1,65 @@
-﻿using TwitterClone.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using TwitterClone.Application.Interfaces;
 using TwitterClone.Domain.Entities;
+using TwitterClone.Infrastructure.Persistence;
 
 namespace TwitterClone.Infrastructure.Repositories
 {
-    public class UserRepository: IUserRepository
+    public class UserRepository : IUserRepository
     {
-        private List<User> _users { get; set; } = new List<User>();
+        private readonly TwitterCloneDbContext _context;
+
+        public UserRepository(TwitterCloneDbContext context)
+        {
+            _context = context;
+        }
+
         public User AddUser(User user)
         {
-            _users.Add(user);
+            _context.Users.Add(user);
+            _context.SaveChanges();
             return user;
         }
 
         public User UpdateUser(User user)
         {
-            _users.RemoveAll(u => u.Id == user.Id);
-            _users.Add(user);
-
+            _context.Users.Update(user);
+            _context.SaveChanges();
             return user;
         }
 
         public bool DeleteUser(User user)
         {
-            return _users.Remove(user);
+            _context.Users.Remove(user);
+            return _context.SaveChanges() > 0;
         }
 
         public User? GetUserById(Guid id)
         {
-            return _users.SingleOrDefault(u => u.Id == id);
+            return _context.Users.SingleOrDefault(u => u.Id == id);
         }
+
 
         public List<User> GetUsers()
         {
-            return _users;
+            return _context.Users.AsNoTracking().ToList();
         }
 
         public User? GetUserByEmail(string email)
         {
-            return _users.SingleOrDefault(u => u.Email == email);
+            return _context.Users.SingleOrDefault(u => u.Email == email);
+        }
+
+        public void AddUserRole(UserRole userRole)
+        {
+            _context.UserRoles.Add(userRole);
+            _context.SaveChanges();
+        }
+
+        public void RemoveUserRole(UserRole userRole)
+        {
+            _context.UserRoles.Remove(userRole);
+            _context.SaveChanges();
         }
     }
 }

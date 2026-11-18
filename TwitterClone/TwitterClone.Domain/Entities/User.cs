@@ -42,6 +42,8 @@
             set { _passwordHash = value; }
         }
 
+        public List<UserRole> UserRoles { get; set; }
+
         private List<Guid> _followers = new List<Guid>();
         private List<Guid> _incomingNotifications = new List<Guid>();
 

@@ -2,6 +2,7 @@
 {
     public sealed class FriendRequestNotification : Notification
     {
+        private FriendRequestNotification() : base() { }
         public FriendRequestNotification(Guid requestedByUserId) : base("FriendRequest")
         {
             RequestedByUserId = requestedByUserId;
